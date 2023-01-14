@@ -1,6 +1,6 @@
 {
-  "name": "flowbite-npx-test",
-  "version": "0.0.1",
+  "name": "create-flowbite",
+  "version": "0.0.2",
   "description": "Test to make a auto-install for flowbite",
   "main": "index.js",
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CorwinDev/flowbite-npx-test.git"
+    "url": "git+https://github.com/CorwinDev/create-flowbite.git"
   },
   "author": "CorwinDev",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/CorwinDev/flowbite-npx-test/issues"
+    "url": "https://github.com/CorwinDev/create-flowbite/issues"
   },
-  "homepage": "https://github.com/CorwinDev/flowbite-npx-test#readme",
+  "homepage": "https://github.com/CorwinDev/create-flowbite#readme",
   "bin": {
     "flowbite": "./bin/flowbite.js"
   },

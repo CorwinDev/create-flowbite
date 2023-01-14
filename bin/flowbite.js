@@ -1,33 +1,42 @@
 #! /usr/bin/env node
 const fs = require("fs");
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 // Check if the file tailwind.config.js exists
 if (!fs.existsSync("tailwind.config.js")) {
     console.log("tailwind.config.js file not found");
     // Ask if the user wants to create the file
-    const readline = require('readline').createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
     readline.question('Do you want to create the file? (y/n) ', async answer => {
         if (answer == "y") {
             await createTailwindConfig();
-            console.log("tailwind.config.js created");
             updateTailwindConfig();
-
         } else {
-            console.log("tailwind.config.js not created");
+            console.log("tailwind.config.js not created\nExiting...");
             process.exit(1);
         }
         readline.close();
     });
 
 
-}else{
+} else {
     updateTailwindConfig();
 }
 
 function createTailwindConfig() {
-    fs.writeFileSync("tailwind.config.js", "module.exports = {\n    purge: {\n        content: [\n            './src/**/*.html',\n            './src/**/*.js',\n        ],\n        options: {\n            safelist: [],\n        },\n    },\n    darkMode: false, // or 'media' or 'class'\n    theme: {\n        extend: {},\n    },\n    variants: {\n        extend: {},\n    },\n    plugins: [],\n}", "utf8");
+    const data = `
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+    content: ["./src/**/*.{html,js}"],
+    theme: {
+        extend: {},
+    },
+    plugins: [],
+}
+    `;
+    // Write the file
+    fs.writeFileSync("tailwind.config.js", data, "utf8");
     console.log("tailwind.config.js created");
 }
 
@@ -42,19 +51,28 @@ function updateTailwindConfig() {
 
     // Check if flowbite is installed
     if (!fs.existsSync("node_modules/flowbite")) {
-        console.log("Flowbite is not installed");
+        console.log("Dependencies not installed");
         // Check if package.json exists
         if (!fs.existsSync("package.json")) {
             console.log("No npm project found!\nCreate one with \x1b[1m\x1b[4mnpm init\x1b[0m");
             process.exit(1);
         }
-        console.log("Installing flowbite...");
-        // Install flowbite
-        require("./run")("npm install flowbite");
+        readline.question('Do you want to install the dependencies? (y/n) ', async answer => {
+            if (answer == "y") {
+                await require("./run")("npm install -D tailwindcss postcss autoprefixer flowbite");
+                console.log("Dependencies installed");
+                updateTailwindConfig();
+            } else {
+                console.log("Flowbite not installed");
+                process.exit(1);
+            }
+            readline.close();
+        });
+
     }
 
-    var result = data.replace("plugins: [", "plugins: [\n        require('flowbite'),");
-    var result = result.replace("content: [", "content: [\n        './node_modules/flowbite/**/*.js',");
+    var result = data.replace("plugins: [", "plugins: [\n        require('flowbite'),\n");
+    var result = result.replace("content: [", "content: [\n        './node_modules/flowbite/**/*.js',\n");
     fs.writeFileSync("tailwind.config.js", result, "utf8");
     console.log("Flowbite plugin added to tailwind.config.js");
 }
