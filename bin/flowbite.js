@@ -21,9 +21,7 @@ if (process.argv.includes("-v") || process.argv.includes("--version")) {
     process.exit(1);
 }
 
-if (process.argv.includes("add")) {
-    add();
-} else if (process.argv.includes("init")) {
+if (process.argv.includes("init")) {
     init();
 } else {
     console.log("\x1b[0;34m Flowbite CLI \x1b[0m\n\nUsage:\n flowbite add [options]\n flowbite init [options]\n\nOptions:\n  -h, --help\t\tShow this help\n  -v, --version\t\tShow the version\n  --debug\t\tShow debug messages");
@@ -31,6 +29,10 @@ if (process.argv.includes("add")) {
 }
 
 function createTailwindConfig() {
+    if(fs.existsSync("tailwind.config.js")) {
+        log("tailwind.config.js already exists");
+        return;
+    }
     const data = `
 module.exports = {
   content: [],
@@ -61,7 +63,7 @@ async function updateTailwindConfig() {
             console.log("No npm project found!\nCreate one with \x1b[1m\x1b[4mnpm init\x1b[0m");
             process.exit(1);
         }
-        await run("npm install -D tailwindcss postcss autoprefixer flowbite");
+        await run("npm install -D tailwindcss autoprefixer flowbite");
         log("Dependencies installed");
         updateTailwindConfig();
 
@@ -152,18 +154,5 @@ async function init() {
     }
     if (process.argv.includes("-p") || process.argv.includes("--postcss")) {
         await postCss();
-    }
-}
-
-/**
- * Add the flowbite plugin to the tailwind config
- * @returns
- */
-function add() {
-    if (fs.existsSync("tailwind.config.js")) {
-        updateTailwindConfig();
-    }
-    else {
-        log("Tailwind config not found\nRun \x1b[1m\x1b[4mflowbite init\x1b[0m to create one", true);
     }
 }
